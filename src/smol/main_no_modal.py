@@ -10,7 +10,7 @@ openai_model_max_tokens = 3000  # i wonder how to tweak this properly
 
 
 def log(message):
-    logger.typewriter_log(content=message, color="cyan", title="Smol-Ai: ")
+    logger.typewriter_log(content=message, title_color="cyan", title="Smol-Ai: ")
 
 
 def generate_response(system_prompt, user_prompt, *args):

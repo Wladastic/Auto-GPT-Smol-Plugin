@@ -49,7 +49,7 @@ class SmolPlugin(AutoGPTPluginTemplate):
 
         prompt.add_command(
             "build_code_project",
-            "Build a code project from a prompt. Prompt must be as specific as possible. Project is build within your directory, no need to specify a directory. Directory is optional.",
+            "Build a code project from a prompt. This command cannot do any research, make sure to provice as much context as possible. Prompt must be as specific as possible. Project is build within your directory, Directory is optional.",
             {"prompt": "<prompt>", "directory": "<directory>"},
             main,
         )
