@@ -22,6 +22,7 @@ def generate_response(system_prompt, user_prompt, *args):
     import tiktoken
 
     def reportTokens(prompt):
+        openai_model = os.environ["SMART_LLM_MODEL"]
         encoding = tiktoken.encoding_for_model(openai_model)
         # print number of tokens in light gray, with first 10 characters of prompt in green
         encoded = len(encoding.encode(prompt))
@@ -50,6 +51,8 @@ def generate_response(system_prompt, user_prompt, *args):
         reportTokens(value)
         role = "user" if role == "assistant" else "assistant"
 
+    openai_model = os.environ["SMART_LLM_MODEL"]
+    openai_model_max_tokens = int(os.environ["SMART_TOKEN_LIMIT"])
     params = {
         "model": openai_model,
         "messages": messages,
@@ -137,6 +140,11 @@ def main(prompt, directory=None, file=None):
         )
     log(f"using directory: {directory}")
 
+    # check if directory exists, if yes return error to autogpt and explain that it already exists and should take a folder name that doesn't exist
+    if os.path.exists(directory):
+        log(f"directory already exists: {directory}")
+        return "directory already exists and would be deleted: " + directory
+
     # read file from prompt if it ends in a .md filetype
     if prompt.endswith(".md"):
         with open(prompt, "r") as promptfile:
@@ -218,6 +226,7 @@ def main(prompt, directory=None, file=None):
                 )
                 write_file(filename, filecode, directory)
         import tiktoken
+        openai_model = os.environ.get("SMART_LLM_MODEL")
         encode = tiktoken.encoding_for_model(openai_model)
 
         # TODO: make this a function and token limit from config
@@ -255,17 +264,18 @@ def write_file(filename, filecode, directory):
 
 
 def clean_dir(directory):
-    extensions_to_skip = [
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".gif",
-        ".bmp",
-        ".svg",
-        ".ico",
-        ".tif",
-        ".tiff",
-    ]  # Add more extensions if needed
+    log.typewriter_log("Cleaning directory {directory}}")
+    # extensions_to_skip = [
+    #     ".png",
+    #     ".jpg",
+    #     ".jpeg",
+    #     ".gif",
+    #     ".bmp",
+    #     ".svg",
+    #     ".ico",
+    #     ".tif",
+    #     ".tiff",
+    # ]  # Add more extensions if needed
 
     # Check if the directory exists
     # if os.path.exists(directory):
@@ -280,6 +290,8 @@ def clean_dir(directory):
         # create a new directory with timestamp
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         os.rename(directory, directory + "-" + timestamp)
+        log.typewriter_log("renamed directory to {directory}-{timestamp}")
 
     else:
         os.makedirs(directory, exist_ok=True)
+        log.typewriter_log("created directory {directory}")
