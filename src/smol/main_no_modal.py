@@ -231,7 +231,7 @@ def main(prompt, directory=None, file=None):
     except Exception as e:
         print(e)
         print(traceback.format_exc())
-        return "Sorry, I couldn't generate code for that prompt. Please try again with a different prompt."
+        return "Sorry, I couldn't generate code for that prompt. Please try again with a different prompt. But I have generated: {response}"
 
 
 def write_file(filename, filecode, directory):
