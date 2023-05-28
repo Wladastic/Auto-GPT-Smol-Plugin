@@ -34,12 +34,14 @@ Clone this repo into the plugins direcory of [Auto-GPT](https://github.dev/Signi
 Then zip it:
 
 To download it directly from your Auto-GPT directory, you can run this command on Linux or MacOS:
+```
+curl -L -o ./plugins/Auto-GPT-Smol_Ai.zip https://github.com/Wladastic/Auto-GPT-Smol-Plugin/archive/refs/heads/master.zip
+```
 
-curl -L -o ./plugins/Auto-GPT-Plugins.zip https://github.com/Wladastic/Auto-GPT-Smol-Plugin/archive/refs/heads/master.zip
 Or in PowerShell:
-
+```
 Invoke-WebRequest -Uri "https://github.com/Wladastic/Auto-GPT-Smol-Plugin/archive/refs/heads/master.zip"     -OutFile "./plugins/Auto-GPT-Smol_Ai.zip"
-
+```
 
 For interactionless use, set `ALLOWLISTED_PLUGINS=SmolPlugin` in your `.env`
 
