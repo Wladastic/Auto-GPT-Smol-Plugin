@@ -1,3 +1,4 @@
+import datetime
 import os
 import ast
 from time import sleep
@@ -134,6 +135,7 @@ def main(prompt, directory=None, file=None):
             "auto_gpt_workspace",
             "generated"
         )
+    log(f"using directory: {directory}")
 
     # read file from prompt if it ends in a .md filetype
     if prompt.endswith(".md"):
@@ -266,12 +268,18 @@ def clean_dir(directory):
     ]  # Add more extensions if needed
 
     # Check if the directory exists
+    # if os.path.exists(directory):
+    #     # If it does, iterate over all files and directories
+    #     for root, dirs, files in os.walk(directory):
+    #         for file in files:
+    #             _, extension = os.path.splitext(file)
+    #             if extension not in extensions_to_skip:
+    #                 os.remove(os.path.join(root, file))
+    # move to directory named by timestamp instead of deleting
     if os.path.exists(directory):
-        # If it does, iterate over all files and directories
-        for root, dirs, files in os.walk(directory):
-            for file in files:
-                _, extension = os.path.splitext(file)
-                if extension not in extensions_to_skip:
-                    os.remove(os.path.join(root, file))
+        # create a new directory with timestamp
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+        os.rename(directory, directory + "-" + timestamp)
+
     else:
         os.makedirs(directory, exist_ok=True)
