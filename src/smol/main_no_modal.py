@@ -8,9 +8,12 @@ from autogpt.logs import logger
 openai_model = "gpt-4"  # or 'gpt-3.5-turbo',
 openai_model_max_tokens = 3000  # i wonder how to tweak this properly
 
+total_tokens = 0
 
-def log(message):
-    logger.typewriter_log(content=message, title_color="cyan", title="Smol-Ai: ")
+
+def log(message, speak_text=False):
+    logger.typewriter_log(
+        content=message, title_color="cyan", title="Smol-Ai: ")
 
 
 def generate_response(system_prompt, user_prompt, *args):
@@ -20,9 +23,10 @@ def generate_response(system_prompt, user_prompt, *args):
     def reportTokens(prompt):
         encoding = tiktoken.encoding_for_model(openai_model)
         # print number of tokens in light gray, with first 10 characters of prompt in green
-        print(
+        encoded = len(encoding.encode(prompt))
+        log(
             "\033[37m"
-            + str(len(encoding.encode(prompt)))
+            + str(encoded)
             + " tokens\033[0m"
             + " in prompt: "
             + "\033[92m"
@@ -128,8 +132,7 @@ def main(prompt, directory=None, file=None):
             current_working_directory,
             "autogpt",
             "auto_gpt_workspace",
-            "generated",
-            directory
+            "generated"
         )
 
     # read file from prompt if it ends in a .md filetype
@@ -137,9 +140,9 @@ def main(prompt, directory=None, file=None):
         with open(prompt, "r") as promptfile:
             prompt = promptfile.read()
 
-    log("hi its me, 🐣the smol developer🐣! you said you wanted:")
+    log("hi its me, the smol developer! you said you wanted me to:", speak_text=True)
     # print the prompt in green color
-    print("\033[92m" + prompt + "\033[0m")
+    log(prompt, speak_text=True)
 
     # example prompt:
     # a Chrome extension that, when clicked, opens a small window with a page where you can enter
@@ -156,7 +159,7 @@ def main(prompt, directory=None, file=None):
     """,
         prompt,
     )
-    print(filepaths_string)
+    log(str(filepaths_string))
     # parse the result into a python list
     list_actual = []
     try:
@@ -199,7 +202,7 @@ def main(prompt, directory=None, file=None):
             """,
                 prompt,
             )
-            print(shared_dependencies)
+            log(str(shared_dependencies))
             # write shared dependencies as a md file inside the generated directory
             write_file("shared_dependencies.md",
                        shared_dependencies, directory)
@@ -217,13 +220,13 @@ def main(prompt, directory=None, file=None):
 
         # TODO: make this a function and token limit from config
         response += f"Files generated in directory: {directory}\n"
-        if encode.encode(response) > 1500:
+        if len(encode.encode(response)) > 1500:
             return response
         response += f"Files generated: {list_actual}\n"
-        if encode.encode(response) > 1500:
+        if len(encode.encode(response)) > 1500:
             return response
         response += f"Shared dependencies: {shared_dependencies}\n"
-        if encode.encode(response) > 1500:
+        if len(encode.encode(response)) > 1500:
             return response
         response += "I hope you like it! Please use list_files to see the files generated."
 
