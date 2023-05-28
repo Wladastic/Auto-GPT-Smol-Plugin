@@ -1,11 +1,16 @@
-import sys
 import os
 import ast
 from time import sleep
+import traceback
+from autogpt.logs import logger
 
 
 openai_model = "gpt-4"  # or 'gpt-3.5-turbo',
 openai_model_max_tokens = 3000  # i wonder how to tweak this properly
+
+
+def log(message):
+    logger.typewriter_log(content=message, color="cyan", title="Smol-Ai: ")
 
 
 def generate_response(system_prompt, user_prompt, *args):
@@ -115,6 +120,7 @@ def main(prompt, directory=None, file=None):
             current_working_directory,
             "autogpt",
             "auto_gpt_workspace",
+            "generated",
             directory
         )
     else:
@@ -122,6 +128,7 @@ def main(prompt, directory=None, file=None):
             current_working_directory,
             "autogpt",
             "auto_gpt_workspace",
+            "generated",
             directory
         )
 
@@ -130,7 +137,7 @@ def main(prompt, directory=None, file=None):
         with open(prompt, "r") as promptfile:
             prompt = promptfile.read()
 
-    print("hi its me, 🐣the smol developer🐣! you said you wanted:")
+    log("hi its me, 🐣the smol developer🐣! you said you wanted:")
     # print the prompt in green color
     print("\033[92m" + prompt + "\033[0m")
 
@@ -223,6 +230,7 @@ def main(prompt, directory=None, file=None):
         return response
     except Exception as e:
         print(e)
+        print(traceback.format_exc())
         return "Sorry, I couldn't generate code for that prompt. Please try again with a different prompt."
 
 
